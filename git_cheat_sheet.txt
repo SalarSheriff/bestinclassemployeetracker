@@ -1,0 +1,197 @@
+
+### Git Cheat Sheet
+
+#### Initial Setup
+1. **Initialize a new Git repository**:
+   ```bash
+   git init
+   ```
+
+2. **Clone an existing repository**:
+   ```bash
+   git clone https://github.com/user/repo.git
+   ```
+
+#### Basic Commands
+1. **Check the status of your files**:
+   ```bash
+   git status
+   ```
+
+2. **Add files to staging area**:
+   ```bash
+   git add <file>
+   git add .
+   ```
+
+3. **Commit changes**:
+   ```bash
+   git commit -m "Your commit message"
+   ```
+
+4. **View commit history**:
+   ```bash
+   git log
+   ```
+
+#### Branching
+1. **List all branches**:
+   ```bash
+   git branch
+   ```
+
+2. **Create a new branch**:
+   ```bash
+   git branch <branch-name>
+   ```
+
+3. **Switch to a branch**:
+   ```bash
+   git checkout <branch-name>
+   # or
+   git switch <branch-name>
+   ```
+
+4. **Create and switch to a new branch**:
+   ```bash
+   git checkout -b <branch-name>
+   # or
+   git switch -c <branch-name>
+   ```
+
+#### Remote Repositories
+1. **Add a remote repository**:
+   ```bash
+   git remote add origin https://github.com/user/repo.git
+   ```
+
+2. **View remote repositories**:
+   ```bash
+   git remote -v
+   ```
+
+3. **Push to a remote repository**:
+   ```bash
+   git push origin <branch-name>
+   ```
+
+4. **Push and set upstream branch**:
+   ```bash
+   git push -u origin <branch-name>
+   ```
+
+5. **Pull from a remote repository**:
+   ```bash
+   git pull origin <branch-name>
+   ```
+
+6. **Fetch changes from remote without merging**:
+   ```bash
+   git fetch origin
+   ```
+
+#### Merging and Rebasing
+1. **Merge another branch into the current branch**:
+   ```bash
+   git merge <branch-name>
+   ```
+
+2. **Rebase current branch onto another branch**:
+   ```bash
+   git rebase <branch-name>
+   ```
+
+#### Stashing
+1. **Stash changes**:
+   ```bash
+   git stash
+   ```
+
+2. **List stashes**:
+   ```bash
+   git stash list
+   ```
+
+3. **Apply the most recent stash**:
+   ```bash
+   git stash apply
+   ```
+
+4. **Apply a specific stash**:
+   ```bash
+   git stash apply stash@{index}
+   ```
+
+#### Viewing Changes
+1. **Show changes in the working directory**:
+   ```bash
+   git diff
+   ```
+
+2. **Show changes between commits**:
+   ```bash
+   git diff <commit1> <commit2>
+   ```
+
+3. **Show changes of a specific file**:
+   ```bash
+   git diff <file>
+   ```
+
+#### Tagging
+1. **Create a new tag**:
+   ```bash
+   git tag <tag-name>
+   ```
+
+2. **List all tags**:
+   ```bash
+   git tag
+   ```
+
+3. **Push tags to remote repository**:
+   ```bash
+   git push origin <tag-name>
+   # or push all tags
+   git push origin --tags
+   ```
+
+#### Deleting Branches
+1. **Delete a local branch**:
+   ```bash
+   git branch -d <branch-name>
+   ```
+
+2. **Force delete a local branch**:
+   ```bash
+   git branch -D <branch-name>
+   ```
+
+3. **Delete a remote branch**:
+   ```bash
+   git push origin --delete <branch-name>
+   ```
+
+#### Example Workflows
+1. **Creating a new branch and pushing to remote**:
+   ```bash
+   git checkout -b new-feature
+   git add .
+   git commit -m "Add new feature"
+   git push -u origin new-feature
+   ```
+
+2. **Merging a branch into `main`**:
+   ```bash
+   git checkout main
+   git pull origin main
+   git merge new-feature
+   git push origin main
+   ```
+
+3. **Rebasing a feature branch onto `main`**:
+   ```bash
+   git checkout new-feature
+   git pull origin main
+   git rebase main
+   ```

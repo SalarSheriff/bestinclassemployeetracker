@@ -37,7 +37,7 @@ function parseTime(time) {
 async function getEmployeeNames() {
   let { data: employeeNames, error } = await supabase
     .from('employees')
-    .select('name');
+    .select('name').order('name',{ascending: true});
 
   if (error) {
     console.error('Error fetching employee names:', error.message);
