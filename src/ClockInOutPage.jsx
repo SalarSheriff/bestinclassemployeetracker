@@ -37,7 +37,7 @@ function parseTime(time) {
 async function getEmployeeNames() {
   let { data: employeeNames, error } = await supabase
     .from('employees')
-    .select('name').order('name',{ascending: true});
+    .select('name').order('name', { ascending: true });
 
   if (error) {
     console.error('Error fetching employee names:', error.message);
@@ -79,6 +79,11 @@ async function getEmployee(name) {
 //On top of everything global so it doesn't get reset to null
 let currentEmployee = null
 
+
+
+
+
+
 function ClockInOutPage() {
 
 
@@ -97,7 +102,7 @@ function ClockInOutPage() {
   const [buttonType, setButtonType] = useState('clockIn') // clockIn or clockOut
   const [employeeNames, setEmployeeNames] = useState([])
 
-
+  
   //This is going to be the text saying the most recent message from the employee
   const [displayText, setDisplayText] = useState('')
 
@@ -122,6 +127,18 @@ function ClockInOutPage() {
 
   }, [])
 
+
+
+
+  //This will refresh the page every 5 minutes so that no one is stuck with an old client
+  useEffect(() => {
+
+
+    setInterval(() => {
+      window.location.reload()
+
+    }, 1000 * 60 * 5)
+  }, [])
 
   useEffect(() => {
 
@@ -152,6 +169,7 @@ function ClockInOutPage() {
         const timeOfLastAction = employeeData.workLog[employeeData.workLog.length - 1].actions[employeeData.workLog[employeeData.workLog.length - 1].actions.length - 1].time
         const actionOfLastAction = employeeData.workLog[employeeData.workLog.length - 1].actions[employeeData.workLog[employeeData.workLog.length - 1].actions.length - 1].action
         setDisplayText("Hello, " + employee + '. You performed: "' + actionOfLastAction + '" at ' + timeOfLastAction)
+        
       }
 
       //If no exising actions, just say hello
@@ -163,11 +181,11 @@ function ClockInOutPage() {
       console.log(error)
     })
 
+    
+   
 
 
-
-
-  }, [employee]);
+  }, [employee, buttonType]); //Also check for button type so that it can update the text when the button is pressed
 
 
 
@@ -299,6 +317,9 @@ function ClockInOutPage() {
 
         }]
       })
+
+
+      
     }
 
 
@@ -322,6 +343,8 @@ function ClockInOutPage() {
     updateEmployeeIsWorking().catch(console.error);
     updateEmployeeWorkLog().catch(console.error);
 
+
+    
 
   }
 
