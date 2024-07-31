@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react'
+import {forwardRef, useState, useEffect } from 'react'
 import Container from '@mui/material/Container';
 import { InputLabel, MenuItem, Select, Button, Paper, Box, Typography } from '@mui/material';
 import { createClient } from '@supabase/supabase-js'
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
 import BiceLogo from './assets/bicelogo.png'
 //Database provided by Supabase
 //https://supabase.com/dashboard/project/dpqtysyebtavxvgshhpd/editor/29129
@@ -80,7 +85,10 @@ async function getEmployee(name) {
 let currentEmployee = null
 
 
-
+//Transition for Dialogue
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 
@@ -102,6 +110,12 @@ function ClockInOutPage() {
   const [buttonType, setButtonType] = useState('clockIn') // clockIn or clockOut
   const [employeeNames, setEmployeeNames] = useState([])
 
+  const [confirmationDialogueOpen, setConfirmationDialogueOpen] = useState(false)
+
+  function handleConfirmationDialogueClose() {
+    setConfirmationDialogueOpen(false)
+  }
+  
   
   //This is going to be the text saying the most recent message from the employee
   const [displayText, setDisplayText] = useState('')
@@ -209,18 +223,19 @@ function ClockInOutPage() {
 
 
 
-  function handleButtonPress() {
+  //When the dialogue to confirm the action is pressed, this will handle the action
+  function handleAgreeToButtonPress() {
+
+
+    //Close the Dialogue
+    setConfirmationDialogueOpen(false)
 
     if (employee === '') {
-
+      alert("Invalid Selection")
+    
       return
     }
 
-    //Have a confirmation dialog
-    const result = confirm('Are you sure you want to peform this action for ' + employee.toUpperCase() + '?')
-    if (!result) {
-      return
-    }
 
     //Switch the button
     if (buttonType === 'clockIn') {
@@ -405,15 +420,32 @@ function ClockInOutPage() {
 
             </Select>
 
-            {buttonType === 'clockIn' && <Button color='success' onClick={handleButtonPress} variant="contained">Clock In</Button>}
-            {buttonType === 'clockOut' && <Button color='error' onClick={handleButtonPress} variant="contained">Clock Out</Button>}
+            {buttonType === 'clockIn' && <Button color='success' onClick={()=> setConfirmationDialogueOpen(true)} variant="contained">Clock In</Button>}
+            {buttonType === 'clockOut' && <Button color='error' onClick={()=> setConfirmationDialogueOpen(true)} variant="contained">Clock Out</Button>}
 
             <h1>{displayText}</h1>
 
           </Box>
 
         </Paper>
-
+        <Dialog
+        open={confirmationDialogueOpen}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleConfirmationDialogueClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+          Are you sure you want to peform this action for ' {employee.toUpperCase()}'?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmationDialogueClose}>Disagree</Button>
+          <Button onClick={handleAgreeToButtonPress}>Agree</Button>
+        </DialogActions>
+      </Dialog>
       </Container>
     </>
   )
