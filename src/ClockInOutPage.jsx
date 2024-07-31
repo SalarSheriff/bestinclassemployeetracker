@@ -168,8 +168,15 @@ function ClockInOutPage() {
         //Display the last message
         const timeOfLastAction = employeeData.workLog[employeeData.workLog.length - 1].actions[employeeData.workLog[employeeData.workLog.length - 1].actions.length - 1].time
         const actionOfLastAction = employeeData.workLog[employeeData.workLog.length - 1].actions[employeeData.workLog[employeeData.workLog.length - 1].actions.length - 1].action
-        setDisplayText("Hello, " + employee + '. You performed: "' + actionOfLastAction + '" at ' + timeOfLastAction)
+        const dateOfLastAction = employeeData.workLog[employeeData.workLog.length - 1].date
         
+       
+        actionOfLastAction === 'clockIn' ? setDisplayText("Hello, " + employee + ". On " + dateOfLastAction + ' you clocked in at ' + timeOfLastAction) : setDisplayText("Hello, " + employee + ". On " + dateOfLastAction + ' you clocked out at ' + timeOfLastAction)
+
+       
+
+
+
       }
 
       //If no exising actions, just say hello
