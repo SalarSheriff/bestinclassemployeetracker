@@ -258,7 +258,7 @@ return(
             flexGrow: .8
           }}>{employee.name}</Typography>
 
-          <Typography>Hours Worked: {getTotalHoursWorked(employee.workLog)}</Typography>
+          <Typography>Hours Worked: {getTotalHoursWorked(employee.workLog).toFixed(2)}</Typography>
           
           
         </AccordionSummary>
@@ -284,7 +284,7 @@ return(
                       return (
                         <TableRow>
                           <TableCell>{entry.date}</TableCell>
-                          <TableCell>{entry.hoursWorked}</TableCell>
+                          <TableCell>{entry.hoursWorked.toFixed(2)}</TableCell>
                         </TableRow>
                       )
                     
