@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /Users/salarsheriff/Documents/bestinclassemployeetracker/.claude 2>/dev/null || mkdir -p /Users/salarsheriff/Documents/bestinclassemployeetracker/.claude)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
-import Container from '@mui/material/Container';
-import { InputLabel, MenuItem, Select, Button, Paper, Box, Typography } from '@mui/material';
+import { Paper, Box, Typography, Chip } from '@mui/material';
 import { createClient } from '@supabase/supabase-js'
-import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -10,300 +8,190 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import dayjs from 'dayjs';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import BiceLogo from './assets/bicelogo.png'
 
-
-
-// Create a single supabase client for interacting with your database
 const supabase = createClient('https://dpqtysyebtavxvgshhpd.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwcXR5c3llYnRhdnh2Z3NoaHBkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyMTE2OTE2OSwiZXhwIjoyMDM2NzQ1MTY5fQ.K8QhNXZwjSE4Sfd4XuqCrqq7JOdDL-qLa9585CurFbE')
 
-function calculateTotalTime(log) {
-  let totalTime = 0;
-  let lastClockInTime = null;
-
-  log.forEach(entry => {
-    const entryTime = new Date(entry.time.replace(/-/g, '/'));
-
-    if (entry.action === "clockIn") {
-      lastClockInTime = entryTime;
-    } else if (entry.action === "clockOut" && lastClockInTime) {
-      totalTime += (entryTime - lastClockInTime) / 1000; // Difference in seconds
-      lastClockInTime = null;
-    }
-  });
-
-  return totalTime / 3600; // Convert seconds to hours
-}
-
-/*
-Example Usage
-calculateTotalTimeBetweenRange(employee.workLog, 7, 7) gives the total hours worked in July
-calculateTotalTimeBetweenRange(employee.workLog, 7, 8) gives the total hours worked between July and August
-calculateTotalTimeBetweenRange(employee.workLog, 7, 9) gives the total hours worked between July and September
-
-*/
-function calculateTotalTimeBetweenRange(log, startMonth, endMonth) {
-  let totalTime = 0;
-  let lastClockInTime = null;
-
-  log.forEach(entry => {
-    const entryTime = new Date(entry.time.replace(/-/g, '/'));
-
-    const entryMonth = entryTime.getMonth() + 1; // getMonth() returns month index starting from 0
-
-    // Check if the entry month is within the specified range
-    if (entryMonth >= startMonth && entryMonth <= endMonth) {
-      if (entry.action === "clockIn") {
-        lastClockInTime = entryTime;
-      } else if (entry.action === "clockOut" && lastClockInTime) {
-        totalTime += (entryTime - lastClockInTime) / 1000; // Difference in seconds
-        lastClockInTime = null;
-      }
-    }
-  });
-
-  return totalTime / 3600; // Convert seconds to hours
-}
-function calculateTotalTimeBetweenRangeWithYear(log) {
-  let totalTime = 0;
-  let lastClockInTime = null;
-
-  log.forEach(entry => {
-    const entryTime = new Date(entry.time.replace(/-/g, '/'));
-    const entryYear = entryTime.getFullYear();
-    const entryMonth = entryTime.getMonth() + 1; // getMonth() returns month index starting from 0
-
-    // Check if the entry year and month are within the specified range
-    if (
-      (entryYear > startYear || (entryYear === startYear && entryMonth >= startMonth)) &&
-      (entryYear < endYear || (entryYear === endYear && entryMonth <= endMonth))
-    ) {
-      if (entry.action === "clockIn") {
-        lastClockInTime = entryTime;
-      } else if (entry.action === "clockOut" && lastClockInTime) {
-        totalTime += (entryTime - lastClockInTime) / 1000; // Difference in seconds
-        lastClockInTime = null;
-      }
-    }
-  });
-
-  return totalTime / 3600; // Convert seconds to hours
-}
 function isDateInRange(dateStr, startDateStr, endDateStr) {
-  // Convert the input date strings to Date objects
   const date = new Date(dateStr);
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
-
-  // Check if the date is within the range, inclusive
   return date >= startDate && date <= endDate;
 }
 
-
-
-
-
-
-
-
 async function fetchEmployees() {
-
-  let { data: employees, error } = await supabase
-    .from('employees')
-    .select('*')
-  return (employees)
+  let { data: employees } = await supabase.from('employees').select('*')
+  return employees
 }
 
-
-
 function AdminPage() {
-
   const [employees, setEmployees] = useState([])
-
-  const [startDate, setStartDate] = useState(dayjs()) // THIS is seperate to Date() function
+  const [startDate, setStartDate] = useState(dayjs())
   const [endDate, setEndDate] = useState(dayjs())
 
-//The total hours worked between the startDate and endDate
   function getTotalHoursWorked(log) {
-
     let totalHours = 0
     log.forEach(entry => {
       if (isDateInRange(entry.date, startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"))) {
         totalHours += entry.hoursWorked
       }
-    }
-
-    )
-
+    })
     return totalHours
-
   }
-
-
-
-
-
-
-
-
-  function handleStartDateChange(date) {
-    setStartDate(date)
-  }
-
-
-
-
-
-  function handleEndDateChange(date) {
-
-    setEndDate(date)
-  }
-
-
-
-
-
-
-
-
-
-
 
   useEffect(() => {
-
-    fetchEmployees().then((data) => {
-
-      //Update the employees state
-      setEmployees(data)
-      data.forEach((employee) => {
-
-
-
-
-
-      })
-
-
-    })
-
+    fetchEmployees().then(data => setEmployees(data))
   }, [])
 
+  const brandBlue = '#1a4fa0'
+  const brandGreen = '#2a7a30'
 
   return (
+    <Box sx={{
+      minHeight: '100vh',
+      background: 'linear-gradient(160deg, #dce8f7 0%, #eef5ee 60%, #dceadc 100%)',
+      marginLeft: '-24px',
+      width: 'calc(100% + 48px)',
+      pb: 6,
+    }}>
 
+      {/* Header */}
+      <Box sx={{ background: '#fff', boxShadow: '0 2px 8px rgba(26,79,160,0.10)', mb: 4 }}>
+        <Box sx={{ maxWidth: 900, mx: 'auto', px: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', pt: 3, pb: 1.5, borderBottom: '1px solid #eef2f8' }}>
+            <img src={BiceLogo} alt="Best In Class Logo" style={{ maxHeight: 64, objectFit: 'contain' }} />
+          </Box>
+          <Box sx={{ background: brandBlue, mx: -4, px: 4, py: 1.2, display: 'flex', justifyContent: 'center' }}>
+            <Typography sx={{ color: 'rgba(255,255,255,0.92)', fontSize: 13, fontWeight: 600, letterSpacing: 2.5, textTransform: 'uppercase' }}>
+              Admin Dashboard
+            </Typography>
+          </Box>
+          <Box sx={{ height: 4, background: brandGreen, mx: -4 }} />
+        </Box>
+      </Box>
 
-    <>
-      <Typography variant='h2'>Admin Page</Typography>
+      <Box sx={{ maxWidth: 900, mx: 'auto', px: 3 }}>
 
-      <Typography variant="h6">Select the start and end month and year to calculate the total hours worked between the range</Typography>
+        {/* Date range filter */}
+        <Paper elevation={3} sx={{ borderRadius: 3, p: 3, mb: 4, boxShadow: '0 4px 20px rgba(26,79,160,0.10)' }}>
+          <Typography sx={{ color: brandBlue, fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', mb: 2 }}>
+            Filter Date Range
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+            <DatePicker
+              label="Start Date"
+              value={startDate}
+              onChange={date => setStartDate(date)}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  sx: {
+                    '& .MuiOutlinedInput-root': { borderRadius: 2, background: '#f4f7fc' },
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#c5d5ee' },
+                    '& label.Mui-focused': { color: brandBlue },
+                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: brandBlue },
+                  }
+                }
+              }}
+            />
+            <Typography sx={{ color: '#999', fontWeight: 500 }}>to</Typography>
+            <DatePicker
+              label="End Date"
+              value={endDate}
+              onChange={date => setEndDate(date)}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  sx: {
+                    '& .MuiOutlinedInput-root': { borderRadius: 2, background: '#f4f7fc' },
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#c5d5ee' },
+                    '& label.Mui-focused': { color: brandBlue },
+                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: brandBlue },
+                  }
+                }
+              }}
+            />
+          </Box>
+        </Paper>
 
-      <DatePicker label="Start" value={startDate} onChange={handleStartDateChange} />
-      <DatePicker label="End" value={endDate} onChange={handleEndDateChange} />
+        {/* Employee list */}
+        <Typography sx={{ color: brandBlue, fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', mb: 1.5 }}>
+          Employees ({employees.length})
+        </Typography>
 
-
-
-
-
-      {/* <TableContainer component={Paper}>
-
-
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-
-
-
-          <TableHead>
-            <TableRow>
-              <TableCell>Employee Name</TableCell>
-              <TableCell >Hours Worked</TableCell></TableRow>
-          </TableHead>
-
-          <TableBody>
-            {employees.map((employee) => {
-
-              return (<TableRow>
-
-                <TableCell>{employee.name}</TableCell>
-                <TableCell>{getTotalHoursWorked(employee.workLog)}</TableCell>
-              </TableRow>)
-
-
-            })}
-
-
-          </TableBody>
-        </Table>
-      </TableContainer> */}
-
-
-
-{employees.map((employee) => {
-return(
-<Accordion>
-        <AccordionSummary
-          expandIcon={<ArrowDownwardIcon />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        
-        >
-
-          
-          <Typography sx={{
-            flexGrow: .8
-          }}>{employee.name}</Typography>
-
-          <Typography>Hours Worked: {getTotalHoursWorked(employee.workLog).toFixed(2)}</Typography>
-          
-          
-        </AccordionSummary>
-        <AccordionDetails>
-          
-
-          <TableContainer component={Paper}>
-
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-
-              <TableHead>
-<TableRow>
-
-  <TableCell>Date</TableCell>
-  <TableCell>Hours Worked</TableCell>
-</TableRow>
-                </TableHead>
-                <TableBody>
-                  {employee.workLog.map((entry) => {
-
-
-                    if(isDateInRange(entry.date, startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"))){
-                      return (
-                        <TableRow>
-                          <TableCell>{entry.date}</TableCell>
-                          <TableCell>{entry.hoursWorked.toFixed(2)}</TableCell>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {employees.map((employee, i) => {
+            const hours = getTotalHoursWorked(employee.workLog)
+            const filteredLog = employee.workLog.filter(entry =>
+              isDateInRange(entry.date, startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"))
+            )
+            return (
+              <Accordion
+                key={i}
+                elevation={2}
+                sx={{
+                  borderRadius: '12px !important',
+                  overflow: 'hidden',
+                  boxShadow: '0 2px 12px rgba(26,79,160,0.08)',
+                  '&:before': { display: 'none' },
+                  '& .MuiAccordionSummary-root': { borderLeft: `4px solid ${brandBlue}` },
+                }}
+              >
+                <AccordionSummary expandIcon={<ArrowDownwardIcon sx={{ color: brandBlue }} />}>
+                  <Typography sx={{ flexGrow: 1, fontWeight: 600, color: '#1a1a1a' }}>
+                    {employee.name}
+                  </Typography>
+                  <Chip
+                    label={`${hours.toFixed(2)} hrs`}
+                    size="small"
+                    sx={{
+                      background: hours > 0 ? 'rgba(42,122,48,0.1)' : '#f0f0f0',
+                      color: hours > 0 ? brandGreen : '#999',
+                      fontWeight: 700,
+                      border: `1px solid ${hours > 0 ? 'rgba(42,122,48,0.25)' : '#ddd'}`,
+                      mr: 1,
+                    }}
+                  />
+                </AccordionSummary>
+                <AccordionDetails sx={{ p: 0 }}>
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow sx={{ background: '#f4f7fc' }}>
+                          <TableCell sx={{ fontWeight: 700, color: brandBlue, fontSize: 12, letterSpacing: 0.5 }}>Date</TableCell>
+                          <TableCell sx={{ fontWeight: 700, color: brandBlue, fontSize: 12, letterSpacing: 0.5 }}>Hours Worked</TableCell>
                         </TableRow>
-                      )
-                    
-                    }
-                    
-                  })}
-                  </TableBody>
-              </Table>
-            </TableContainer>
-        </AccordionDetails>
-      </Accordion>
+                      </TableHead>
+                      <TableBody>
+                        {filteredLog.map((entry, j) => (
+                          <TableRow key={j} sx={{ '&:hover': { background: '#f8f9ff' } }}>
+                            <TableCell sx={{ color: '#333' }}>{entry.date}</TableCell>
+                            <TableCell sx={{ color: '#333', fontWeight: 500 }}>{entry.hoursWorked.toFixed(2)}</TableCell>
+                          </TableRow>
+                        ))}
+                        {filteredLog.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={2} sx={{ color: '#aaa', fontStyle: 'italic', textAlign: 'center', py: 2 }}>
+                              No entries in this date range
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </AccordionDetails>
+              </Accordion>
+            )
+          })}
+        </Box>
 
-)
-})}
-      
-      
-
-
-    </>
+      </Box>
+    </Box>
   )
 }
 

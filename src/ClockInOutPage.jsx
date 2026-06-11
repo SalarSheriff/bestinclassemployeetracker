@@ -1,6 +1,6 @@
 import {forwardRef, useState, useEffect } from 'react'
 import Container from '@mui/material/Container';
-import { InputLabel, MenuItem, Select, Button, Paper, Box, Typography } from '@mui/material';
+import { MenuItem, Select, Button, Paper, Box, Typography } from '@mui/material';
 import { createClient } from '@supabase/supabase-js'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -370,83 +370,268 @@ function ClockInOutPage() {
 
   }
 
+  const isClockIn = buttonType === 'clockIn'
+
+  // Brand colors from the BICE logo
+  const brandBlue = '#1a4fa0'
+  const brandGreen = '#2a7a30'
+  const clockOutRed = '#c0392b'
+
   return (
     <>
-      <Container>
+      <Box sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(160deg, #dce8f7 0%, #eef5ee 60%, #dceadc 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 3,
+        marginLeft: '-24px',
+        width: 'calc(100% + 48px)',
+      }}>
+        <Box sx={{ width: '100%', maxWidth: 440 }}>
 
-
-
-        <Paper elevation={2} sx={{
-          padding: 2,
-          height: '50vh',
-          marginTop: '20vh',
-        }}>
-          <Box sx={{
-            display: 'flex',
-            width: '50%',
-            justifyContent: 'center', // Centers the image horizontally
-            alignItems: 'center', // Centers the image vertically
+          <Paper elevation={4} sx={{
+            borderRadius: 4,
+            overflow: 'hidden',
+            background: '#ffffff',
+            boxShadow: '0 8px 40px rgba(26,79,160,0.13)',
           }}>
-            <img src={BiceLogo} alt="Bice Logo" style={{ maxWidth: '100%', height: 'auto' }} />
-          </Box>
-          <Box sx={
-            {
+
+            {/* Logo section */}
+            <Box sx={{
+              background: '#fff',
+              px: 4,
+              pt: 3,
+              pb: 2,
               display: 'flex',
-              flexDirection: 'column',
-              gap: 2
-            }
-          }>
+              justifyContent: 'center',
+              borderBottom: `1px solid #eef2f8`,
+            }}>
+              <img src={BiceLogo} alt="Best In Class Logo" style={{ maxHeight: 72, objectFit: 'contain' }} />
+            </Box>
 
-            {/* <Typography variant='h4'>Best In Class Hours Tracker</Typography> */}
-            <InputLabel id="employee-selector-label">Name</InputLabel>
-            <Select labelId='employee-selector-label'
-              value={employee}
-              label='Name'
-              onChange={handleEmployeeChange}
+            {/* Blue header band */}
+            <Box sx={{
+              background: brandBlue,
+              px: 4,
+              py: 1.5,
+              display: 'flex',
+              justifyContent: 'center',
+            }}>
+              <Typography sx={{
+                color: 'rgba(255,255,255,0.92)',
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: 2.5,
+                textTransform: 'uppercase',
+              }}>
+                Employee Time Tracker
+              </Typography>
+            </Box>
 
-            >
+            {/* Green accent stripe */}
+            <Box sx={{ height: 4, background: brandGreen }} />
 
-              {employeeNames.map((name, key) => (
+            <Box sx={{ px: 4, py: 4 }}>
 
+              {/* Status badge — shown after selecting an employee */}
+              {employee ? (
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  mb: 3,
+                }}>
+                  <Box sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    px: 2,
+                    py: 0.6,
+                    borderRadius: 10,
+                    background: isClockIn ? 'rgba(42,122,48,0.08)' : 'rgba(192,57,43,0.08)',
+                    border: `1.5px solid ${isClockIn ? 'rgba(42,122,48,0.3)' : 'rgba(192,57,43,0.3)'}`,
+                  }}>
+                    <Box sx={{
+                      width: 8, height: 8, borderRadius: '50%',
+                      background: isClockIn ? brandGreen : clockOutRed,
+                    }} />
+                    <Typography sx={{
+                      color: isClockIn ? brandGreen : clockOutRed,
+                      fontSize: 13,
+                      fontWeight: 600,
+                    }}>
+                      {isClockIn ? 'Not clocked in' : 'Currently clocked in'}
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Typography sx={{
+                  textAlign: 'center',
+                  color: '#888',
+                  fontSize: 15,
+                  mb: 3,
+                  fontWeight: 500,
+                }}>
+                  Welcome! Please select your name below.
+                </Typography>
+              )}
 
-                <MenuItem value={name} key={key}>{name}</MenuItem>
+              {/* Employee selector */}
+              <Box sx={{ mb: 3 }}>
+                <Typography sx={{
+                  color: brandBlue,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  mb: 1,
+                  textTransform: 'uppercase',
+                }}>
+                  Your Name
+                </Typography>
+                <Select
+                  value={employee}
+                  onChange={handleEmployeeChange}
+                  displayEmpty
+                  fullWidth
+                  sx={{
+                    borderRadius: 2,
+                    background: '#f4f7fc',
+                    color: employee ? '#111' : '#999',
+                    fontWeight: employee ? 600 : 400,
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#c5d5ee' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: brandBlue },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: brandBlue },
+                    '& .MuiSvgIcon-root': { color: brandBlue },
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    <Typography sx={{ color: '#aaa', fontStyle: 'italic' }}>Choose your name...</Typography>
+                  </MenuItem>
+                  {employeeNames.map((name, key) => (
+                    <MenuItem value={name} key={key}>{name}</MenuItem>
+                  ))}
+                </Select>
+              </Box>
 
+              {/* Clock In / Out button */}
+              <Button
+                fullWidth
+                variant="contained"
+                disabled={!employee}
+                onClick={() => setConfirmationDialogueOpen(true)}
+                sx={{
+                  py: 1.8,
+                  borderRadius: 2,
+                  fontSize: 16,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  textTransform: 'uppercase',
+                  background: isClockIn
+                    ? `linear-gradient(90deg, ${brandGreen}, #3a9a40)`
+                    : `linear-gradient(90deg, ${clockOutRed}, #e74c3c)`,
+                  boxShadow: isClockIn
+                    ? '0 4px 16px rgba(42,122,48,0.35)'
+                    : '0 4px 16px rgba(192,57,43,0.35)',
+                  transition: 'all 0.25s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: isClockIn
+                      ? '0 6px 20px rgba(42,122,48,0.45)'
+                      : '0 6px 20px rgba(192,57,43,0.45)',
+                    background: isClockIn
+                      ? `linear-gradient(90deg, ${brandGreen}, #3a9a40)`
+                      : `linear-gradient(90deg, ${clockOutRed}, #e74c3c)`,
+                  },
+                  '&:disabled': {
+                    background: '#e0e0e0',
+                    color: '#aaa',
+                    boxShadow: 'none',
+                  },
+                }}
+              >
+                {isClockIn ? 'Clock In' : 'Clock Out'}
+              </Button>
 
+              {/* Last action message */}
+              {displayText && (
+                <Box sx={{
+                  mt: 3,
+                  p: 2,
+                  borderRadius: 2,
+                  background: '#f4f7fc',
+                  border: `1px solid #c5d5ee`,
+                  textAlign: 'center',
+                }}>
+                  <Typography sx={{ color: '#444', fontSize: 14 }}>
+                    {displayText}
+                  </Typography>
+                </Box>
+              )}
 
+            </Box>
+          </Paper>
 
-              ))}
+          {/* Footer */}
+          <Typography sx={{ textAlign: 'center', color: '#aaa', fontSize: 12, mt: 2 }}>
+            © Best In Class Education Center
+          </Typography>
 
+        </Box>
+      </Box>
 
-
-            </Select>
-
-            {buttonType === 'clockIn' && <Button color='success' onClick={()=> setConfirmationDialogueOpen(true)} variant="contained">Clock In</Button>}
-            {buttonType === 'clockOut' && <Button color='error' onClick={()=> setConfirmationDialogueOpen(true)} variant="contained">Clock Out</Button>}
-
-            <h1>{displayText}</h1>
-
-          </Box>
-
-        </Paper>
-        <Dialog
+      {/* Confirmation Dialog */}
+      <Dialog
         open={confirmationDialogueOpen}
         TransitionComponent={Transition}
         keepMounted
         onClose={handleConfirmationDialogueClose}
-        aria-describedby="alert-dialog-slide-description"
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            minWidth: 320,
+            overflow: 'hidden',
+          }
+        }}
       >
-        <DialogTitle>Confirm Action</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-          Are you sure you want to peform this action for ' {employee.toUpperCase()}'?
+        {/* Dialog header stripe */}
+        <Box sx={{
+          background: isClockIn ? brandGreen : clockOutRed,
+          px: 3, py: 2,
+        }}>
+          <Typography sx={{ color: 'white', fontWeight: 700, fontSize: 18 }}>
+            {isClockIn ? 'Clock In' : 'Clock Out'}
+          </Typography>
+        </Box>
+        <DialogContent sx={{ pt: 2.5 }}>
+          <DialogContentText>
+            Confirm {isClockIn ? 'clock in' : 'clock out'} for{' '}
+            <strong style={{ color: brandBlue }}>{employee}</strong>?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmationDialogueClose}>Disagree</Button>
-          <Button onClick={handleAgreeToButtonPress}>Agree</Button>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button
+            onClick={handleConfirmationDialogueClose}
+            sx={{ color: '#666', borderRadius: 2, px: 2 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleAgreeToButtonPress}
+            variant="contained"
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              background: isClockIn ? brandGreen : clockOutRed,
+              '&:hover': {
+                background: isClockIn ? '#236528' : '#a93226',
+              },
+            }}
+          >
+            Confirm
+          </Button>
         </DialogActions>
       </Dialog>
-      </Container>
     </>
   )
 }
